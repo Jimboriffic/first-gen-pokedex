@@ -2,7 +2,6 @@ const pokemonList = document.querySelector("#pokemonList");
 const buttonsHeader = document.querySelectorAll(".btn-header");
 let URL = "https://pokeapi.co/api/v2/pokemon/";
 
-
 for (let i = 1; i <= 151; i++) {
   fetch(URL + i)
     .then((response) => response.json())
@@ -10,8 +9,9 @@ for (let i = 1; i <= 151; i++) {
 }
 
 function showPokemon(poke) {
-
-  let types = poke.types.map((type) => `<p class="${type.type.name} type">${type.type.name}</p>`);
+  let types = poke.types.map(
+    (type) => `<p class="${type.type.name} type">${type.type.name}</p>`
+  );
   types = types.join('');
 
   let pokeId = poke.id.toString();
@@ -27,7 +27,9 @@ function showPokemon(poke) {
     <p class="pokemon-id-upper">#${pokeId}</p>
     <div class="pokemon-image">
       <img
-        src="${poke.sprites.other["official-artwork"].front_default}" alt="${poke.name}" />
+        src="${poke.sprites.other["official-artwork"].front_default}"  alt="${
+    poke.name
+  }" />
     </div>
     <div class="pokemon-info">
       <div class="name-container">
@@ -38,8 +40,8 @@ function showPokemon(poke) {
         <p class="type">${types}</p>
       </div>
       <div class="pokemon-stats">
-        <p class="stat">${poke.height / 10 }m</p>
-        <p class="stat">${poke.weight / 10 }kg</p>
+        <p class="stat">${poke.height / 10}m</p>
+        <p class="stat">${poke.weight / 10}kg</p>
       </div>
     </div>
     
@@ -47,26 +49,25 @@ function showPokemon(poke) {
   pokemonList.append(div);
 }
 
+buttonsHeader.forEach((button) =>
+  button.addEventListener("click", (event) => {
+    const buttonId = event.currentTarget.id;
 
-buttonsHeader.forEach(boton => boton.addEventListener("click", (event) => {
-  const buttonId = event.currentTarget.id;
+    pokemonList.innerHTML = "";
 
-  pokemonList.innerHTML = "";
-
-  for (let i = 1; i <= 151; i++) {
+    for (let i = 1; i <= 151; i++) {
       fetch(URL + i)
-          .then((response) => response.json())
-          .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
+          if (buttonId === "see-all") {
+            showPokemon(data);
+          } else {
+            const types = data.types.map((type) => type.type.name);
+            if (types.some(type => type.includes(buttonId))) {
+              showPokemon(data);
+            }
+          }
 
-              if(buttonId === "see-all") {
-                  showPokemon(data);
-              } else {
-                  const types = data.types.map(type => type.type.name);
-                  if (types.some(tipo => tipo.includes(buttonId))) {
-                      showPokemon(data);
-                  }
-              }
-
-          })
-  }
-}))
+        })
+    }
+  }))
